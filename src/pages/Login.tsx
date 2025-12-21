@@ -1,47 +1,64 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { Button } from "antd";
-import { useForm } from "react-hook-form";
+import { Button, Row } from "antd";
+import { type FieldValues } from "react-hook-form";
 import { useLoginMutation } from "../redux/features/authApi";
 import { useAppDispatch } from "../redux/hooks";
-import { setUser } from "../redux/features/auth/authSlice";
+import { setUser, type TUser } from "../redux/features/auth/authSlice";
 import { verifyToken } from "../utils/verifyToken";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import PhForm from "../components/form/PhForm";
+import PHInput from "../components/form/PHInput";
 
 
 const Login = () => {
+    const navigate = useNavigate();
     const dispatch = useAppDispatch();
-    const { register, handleSubmit } = useForm({
-        defaultValues: {
-            userId: '0001',
-            password: 'admin12345'
-        }
-    });
+    // const { register, handleSubmit } = useForm({
+    // defaultValues: {
+    //     userId: '0001',
+    //     password: 'admin12345'
+    // }
+    // });
 
-    const [login, { error }] = useLoginMutation();
-    console.log(error);
+    const defaultValues = {
+        userId: '0001',
+        password: 'admin12345'
+    }
 
-    const onSubmit = async (data: any) => {
-        const userInfo = {
-            id: data.userId,
-            password: data.password
+    // const {register} = useFormContext();
+
+    const [login] = useLoginMutation();
+
+    const onSubmit = async (data: FieldValues) => {
+        const toastId = toast.loading('Logging in');
+        console.log(data);
+
+        try {
+            const userInfo = {
+                id: data.userId,
+                password: data.password
+            }
+            const res = await login(userInfo).unwrap();
+            const user = verifyToken(res.data.accessToken) as TUser;
+            console.log(user);
+            dispatch(setUser({ user: user, token: res.data.accessToken }));
+            toast.success("Logged in", { id: toastId, duration: 2000 });
+            navigate(`/${user.role}/dashboard`);
+        } catch (err) {
+            console.log(err);
+            toast.error('Something went wrong', { id: toastId, duration: 2000 });
         }
-        const res = await login(userInfo).unwrap();
-        const user = verifyToken(res.data.accessToken);
-        console.log(user);
-        dispatch(setUser({ user: user, token: res.data.accessToken }));
+
     }
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)}>
-            <div>
-                <label htmlFor="id">ID: </label>
-                <input type="text" id="id" {...register('userId')} />
-            </div>
-            <div>
-                <label htmlFor="password">Password: </label>
-                <input type="text" id="password" {...register('password')} />
-            </div>
-            <Button htmlType="submit">Login</Button>
-        </form>
+        <Row justify="center" align="middle" style={{ height: "100vh" }}>
+            <PhForm onSubmit={onSubmit} defaultValues={defaultValues}>
+                <PHInput type='text' name="userId" label="ID:" />
+                <PHInput type='text' name="password" label="Password:" />
+                <Button htmlType="submit">Login</Button>
+            </PhForm>
+        </Row>
     );
 };
 

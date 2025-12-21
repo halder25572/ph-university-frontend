@@ -20,7 +20,7 @@ export const router = createBrowserRouter([
 
     // this route is for admin dashboard
     {
-        path: '/admin',
+        path: '/superAdmin',
         element: <App />,
         children: routeGenerator(adminPaths as any),
     },
