@@ -5,29 +5,29 @@ import { FormProvider, useForm, type FieldValues, type SubmitHandler } from 'rea
 
 
 // for type error
-
 type TFromConfig = {
-    defaultValues?: Record<string, any>
+    defaultValues?: Record<string, any>;
+    resolver?: any
 }
 
-
-// type TFormProps = {
-//     onSubmit: SubmitHandler<FieldValues>;
-//     children: ReactNode;
-// } & TFromConfig;
 
 type TFormProps = {
   onSubmit: SubmitHandler<FieldValues>;
   children: ReactNode;
   defaultValues?: Record<string, any>;
+  resolver?: any
 };
 
-const PhForm = ({ onSubmit, children, defaultValues }: TFormProps) => {
+const PhForm = ({ onSubmit, children, defaultValues, resolver }: TFormProps) => {
 
     const formConfig: TFromConfig = {};
 
     if (defaultValues) {
         formConfig['defaultValues'] = defaultValues;
+    }
+
+    if (resolver) {
+        formConfig['resolver'] = resolver;
     }
 
     const methods = useForm(formConfig);

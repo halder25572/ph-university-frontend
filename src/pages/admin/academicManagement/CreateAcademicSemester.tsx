@@ -2,26 +2,19 @@ import type { FieldValues, SubmitHandler } from "react-hook-form";
 import PhForm from "../../../components/form/PhForm";
 import { Button, Col, Flex } from "antd";
 import PHSelect from "../../../components/form/PHSelect";
+import { semesterOptions } from "../../../components/constants/semester";
+import { monthOptions } from "../../../components/constants/global";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { academicSemesterSchema } from "../../../Schemas/academicManagement.schema";
+import { useAddAcademicSemesterMutation } from "../../../redux/features/admin/academicManagement.api";
+import { toast } from "sonner";
+import type { TResponse } from "../../../types/global";
 
 
-const nameOptions = [
-    {
-        value: '01',
-        label: 'Autumn',
-    },
-    {
-        value: '02',
-        label: 'Summer',
-    },
-    {
-        value: '03',
-        label: 'Fall',
-    },
-];
+
 
 // get current year
 const currentYear = new Date().getFullYear();
-console.log(currentYear); // current year
 
 // year map
 const yearOption = [0, 1, 2, 3, 4].map(number => ({
@@ -29,31 +22,44 @@ const yearOption = [0, 1, 2, 3, 4].map(number => ({
     label: String(currentYear + number),
 }));
 
-console.log(yearOption);
-
 const CreateAcademicSemester = () => {
 
-    const onSubmit : SubmitHandler<FieldValues> = (data) => {
-        console.log(data.name);
+    const [addAcademicSemester] = useAddAcademicSemesterMutation();
 
-        const name = nameOptions[Number(data.name) - 1]?.label;
 
+    const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+        // console.log(data.name);
+        const toastId = toast.loading('Creating...');
+        const name = semesterOptions[Number(data.name) - 1]?.label;
         const semesterData = {
-            name,
+            name, 
             code: data.name,
             year: data.year,
+            startMonth: data.startMonth,
+            endMonth: data.startMonth,
+        };
+        try {
+            const res = await addAcademicSemester(semesterData) as TResponse;
+            if(res.error){
+                toast.error(res.error.data.message, {id: toastId});
+            }else{
+                toast.success("Semester Created", {id: toastId});
+            }
+        } catch (err) {
+            console.log(err);
+            toast.error('Something went wrong', {id: toastId});
         }
-        console.log("this data is ", semesterData);
-    }
-    
+    };
+
+
     return (
         <Flex justify="center" align="center">
             <Col span={6} >
-                <PhForm onSubmit={onSubmit}>
-                    <PHSelect label="Name" name="name" options={nameOptions} />
+                <PhForm onSubmit={onSubmit} resolver={zodResolver(academicSemesterSchema)}>
+                    <PHSelect label="Name" name="name" options={semesterOptions} />
                     <PHSelect label="Year" name="year" options={yearOption} />
-                    <PHSelect label="Start Month" name="startMonth" options={nameOptions} />
-                    <PHSelect label="End Month" name="endMonth" options={nameOptions} />
+                    <PHSelect label="Start Month" name="startMonth" options={monthOptions} />
+                    <PHSelect label="End Month" name="endMonth" options={monthOptions} />
                     <Button htmlType="submit">Submit</Button>
                 </PhForm>
             </Col>
