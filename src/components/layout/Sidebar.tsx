@@ -20,7 +20,6 @@ const userRole = {
 const Sidebar = () => {
 
     const user = useAppSelector(useCurrentUser);
-    // console.log("Current User", user);
 
     let sidebarItems;
 
@@ -50,6 +49,7 @@ const Sidebar = () => {
             onCollapse={(collapsed, type) => {
                 console.log(collapsed, type);
             }}
+            style={{height: '100vh', position: 'sticky', left: '0', top: '0'}}
         >
             <div style={{ color: "white", height: '4rem', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <Link to='/admin/dashboard'><h1 style={{ color: 'white' }}>PH University</h1></Link>

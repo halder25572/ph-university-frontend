@@ -8,32 +8,6 @@ import { logout } from '../../redux/features/auth/authSlice';
 
 const { Header, Content } = Layout;
 
-
-// const items: MenuProps["items"] = [
-//     {
-//         key: 'Dashboard',
-//         label: <NavLink to='/admin/dashboard'>Dashboard</NavLink>
-//     },
-//     {
-//         key: 'User Management',
-//         label: 'User Management',
-//         children: [
-//             {
-//                 key: 'Create Admin',
-//                 label: <NavLink to='/admin/create-admin'>Create Admin</NavLink>,
-//             },
-//             {
-//                 key: 'Create Faculty',
-//                 label: <NavLink to='/admin/create-faculty'>Create faculty</NavLink>
-//             },
-//             {
-//                 key: 'Create Student',
-//                 label: <NavLink to='/admin/create-student'>Create Student</NavLink>
-//             },
-//         ]
-//     },
-// ];
-
 const MainLayout = () => {
     const dispatch = useAppDispatch();
 
@@ -42,7 +16,7 @@ const MainLayout = () => {
     }
 
     return (
-        <Layout style={{ height: '100vh' }}>
+        <Layout style={{ height: '100%' }}>
             <Sidebar/>
             <Layout>
                 <Header style={{color: "white"}}><Button onClick={handleLogout}>Logout</Button></Header>

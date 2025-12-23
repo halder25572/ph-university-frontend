@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { Form } from 'antd';
 import type { ReactNode } from 'react';
 import { FormProvider, useForm, type FieldValues, type SubmitHandler } from 'react-hook-form';
 
@@ -10,10 +11,16 @@ type TFromConfig = {
 }
 
 
+// type TFormProps = {
+//     onSubmit: SubmitHandler<FieldValues>;
+//     children: ReactNode;
+// } & TFromConfig;
+
 type TFormProps = {
-    onSubmit: SubmitHandler<FieldValues>;
-    children: ReactNode;
-} & TFromConfig;
+  onSubmit: SubmitHandler<FieldValues>;
+  children: ReactNode;
+  defaultValues?: Record<string, any>;
+};
 
 const PhForm = ({ onSubmit, children, defaultValues }: TFormProps) => {
 
@@ -26,9 +33,9 @@ const PhForm = ({ onSubmit, children, defaultValues }: TFormProps) => {
     const methods = useForm(formConfig);
     return (
         <FormProvider {...methods}>
-            <form onSubmit={methods.handleSubmit(onSubmit)}>
+            <Form layout='vertical' onFinish={methods.handleSubmit(onSubmit)}>
                 {children}
-            </form>
+            </Form>
         </FormProvider>
     );
 };
