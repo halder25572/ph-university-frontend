@@ -1,78 +1,98 @@
-import { Table, type TableColumnsType, type TableProps } from "antd"
+import { Button, Table, type TableColumnsType, type TableProps } from "antd"
 import { useGetAllSemestersQuery } from "../../../redux/features/admin/academicManagement.api";
+import type { TAcademicSemester } from "../../../types/academicManagement.type";
+import { useState } from "react";
+import type { TQueryParam } from "../../../types";
 
 
-interface DataType {
-    key: React.Key;
-    name: string;
-    age: number;
-    address: string;
-}
+export type TTableData = Pick<TAcademicSemester, "name" | "year" | "startMonth" | "endMonth">;
 
 
 const AcademicSemester = () => {
-    const { data: semesterData } = useGetAllSemestersQuery(undefined);
+    const [params, setParams] = useState<TQueryParam[] | undefined>(undefined);
+    const { data: semesterData, isLoading, isFetching } = useGetAllSemestersQuery(params);
 
     const tableData = semesterData?.data?.map(({ _id, name, startMonth, endMonth, year }) => ({
-        _id,
+        key: _id,
         name,
         startMonth,
         endMonth,
         year
     }));
 
-    const columns: TableColumnsType<DataType> = [
+    const columns: TableColumnsType<TTableData> = [
         {
             title: 'Name',
+            key: "name",
             dataIndex: 'name',
             showSorterTooltip: { target: 'full-header' },
             filters: [
-                {
-                    text: 'Joe',
-                    value: 'Joe',
-                },
-                {
-                    text: 'Jim',
-                    value: 'Jim',
-                },
-                {
-                    text: 'Submenu',
-                    value: 'Submenu',
-                    children: [
-                        {
-                            text: 'Green',
-                            value: 'Green',
-                        },
-                        {
-                            text: 'Black',
-                            value: 'Black',
-                        },
-                    ],
-                },
-            ],
+                { text: 'Autumn', value: 'Autumn' },
+                { text: 'Fall', value: 'Fall' },
+                { text: 'Summer', value: 'Summer' },
+            ]
         },
         {
             title: 'Year',
+            key: "year",
             dataIndex: 'year',
+            filters: [
+                { text: '2025', value: '2025' },
+                { text: '2026', value: '2026' },
+                { text: '2027', value: '2027' },
+            ],
         },
         {
             title: 'Start Month',
+            key: "startMonth",
             dataIndex: 'startMonth',
         },
         {
             title: 'End Month',
+            key: "endMonth",
             dataIndex: 'endMonth',
+        },
+        {
+            title: 'Action',
+            key: "x",
+            render: () => {
+                return (
+                    <div>
+                        <Button>Update</Button>
+                    </div>
+                )
+            }
         },
     ];
 
-    const onChange: TableProps<DataType>['onChange'] = (pagination, filters, sorter, extra) => {
-        console.log('params', pagination, filters, sorter, extra);
+    const onChange: TableProps<TTableData>['onChange'] = (_pagination, filters, _sorter, extra) => {
+        // console.log('params', pagination, filters, sorter, extra);
+        if (extra.action === 'filter') {
+            const queryParams: TQueryParam[] = [];
+
+            // filters.name?.forEach((item) => (
+            //     queryParams.push({ name: 'name', value: item })
+            // ));
+            filters.name?.forEach((item) =>
+                queryParams.push({ name: 'name', value: item })
+            );
+            filters.year?.forEach((item) =>
+                queryParams.push({ name: 'year', value: item })
+            );
+
+            setParams(queryParams);
+            console.log("Filter Table Data", setParams(queryParams));
+        }
     };
 
 
+    if (isLoading) {
+        return <p>Loading...</p>
+    }
 
     return (
-        <Table<DataType>
+        <Table<TTableData>
+            loading={isFetching}
             columns={columns}
             dataSource={tableData}
             onChange={onChange}
