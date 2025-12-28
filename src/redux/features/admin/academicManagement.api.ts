@@ -1,5 +1,5 @@
 import type { TQueryParam, TResponseRedux } from "../../../types";
-import type { TAcademicSemester } from "../../../types/academicManagement.type";
+import type { TAcademicFaculty, TAcademicSemester } from "../../../types/academicManagement.type";
 import { baseApi } from "../../api/baseApi";
 
 const academicManagementApi = baseApi.injectEndpoints({
@@ -9,7 +9,7 @@ const academicManagementApi = baseApi.injectEndpoints({
                 const params = new URLSearchParams();
 
                 if (args) {
-                    args.forEach((item : TQueryParam) => {
+                    args.forEach((item: TQueryParam) => {
                         params.append(item.name, item.value as string);
                     });
                 }
@@ -41,9 +41,69 @@ const academicManagementApi = baseApi.injectEndpoints({
                 body: data,
             })
         }),
+        getAllAcademicFaculty: builder.query({
+            query: (args) => {
+                const params = new URLSearchParams();
+
+                if (args) {
+                    args.forEach((item: TQueryParam) => {
+                        params.append(item.name, item.value as string);
+                    });
+                }
+
+                return {
+                    url: '/academic-faculties',
+                    method: 'GET',
+                    params: params,
+                }
+            },
+            transformResponse: (response: TResponseRedux<TAcademicFaculty[]>) => {
+                return {
+                    data: response.data,
+                    meta: response.meta
+                };
+            }
+        }),
+        createAcademicDepartment: builder.mutation({
+            query: (data) => ({
+                url: '/academic-departments/create-academic-department',
+                method: 'POST',
+                body: data,
+            })
+        }),
+        getAllAcademicDepartment: builder.query({
+            query: (args) => {
+                const params = new URLSearchParams();
+
+                if (args) {
+                    args.forEach((item: TQueryParam) => {
+                        params.append(item.name, item.value as string);
+                    });
+                }
+
+                return {
+                    url: '/academic-departments',
+                    method: 'GET',
+                    params: params,
+                }
+            },
+            transformResponse: (response: TResponseRedux<TAcademicFaculty[]>) => {
+                return {
+                    data: response.data,
+                    meta: response.meta
+                };
+            }
+        }),
     }),
 });
 
-export const { useGetAllSemestersQuery, useAddAcademicSemesterMutation, useCreateAcademicFacultyMutation } = academicManagementApi;
+export const {
+    useGetAllSemestersQuery,
+    useAddAcademicSemesterMutation,
+    useCreateAcademicFacultyMutation,
+    useGetAllAcademicFacultyQuery,
+    useCreateAcademicDepartmentMutation,
+    useGetAllAcademicDepartmentQuery
+} = academicManagementApi;
 
 

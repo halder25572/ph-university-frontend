@@ -23,6 +23,11 @@ const AcademicSemester = () => {
 
     const columns: TableColumnsType<TTableData> = [
         {
+            title: 'SL',
+            key: 'sl',
+            render: (_text, _record, index) => index + 1,
+        },
+        {
             title: 'Name',
             key: 'name',
             dataIndex: 'name',
@@ -102,7 +107,7 @@ const AcademicSemester = () => {
                 queryParams.push({ name: 'year', value: item })
             )
             );
-            setParams(queryParams)
+            setParams(queryParams);
         }
     };
 

@@ -1,6 +1,5 @@
 import { Button, Col, Flex } from "antd";
 import PhForm from "../../../components/form/PhForm";
-import PHSelect from "../../../components/form/PHSelect";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { FieldValues, SubmitHandler } from "react-hook-form";
 import { toast } from "sonner";
@@ -21,11 +20,11 @@ const CreateAcademicFaculty = () => {
         console.log('Academic Data' ,data.name);
         const toastId = toast.loading('Creating...');
         const name = data.name;
-        const semesterData = {
+        const academicFacultyData = {
             name,
         };
         try {
-            const res = await addAcademicFaculty(semesterData) as TResponse<TAcademicSemester>;
+            const res = await addAcademicFaculty(academicFacultyData) as TResponse<TAcademicSemester>;
             if (res.error) {
                 toast.error(res.error.data.message, { id: toastId });
             } else {
@@ -41,7 +40,8 @@ const CreateAcademicFaculty = () => {
         <Flex justify="center" align="center">
             <Col span={6} >
                 <PhForm onSubmit={onSubmit} resolver={zodResolver(academicFacultySchema)}>
-                    <PHInput label="Name" name="name" options={name} />
+                    {/* <PHInput label="Name" name="name" options={name} /> */}
+                    <PHInput label="Name" name="name" type={""} />
                     <Button htmlType="submit">Submit</Button>
                 </PhForm>
             </Col>
