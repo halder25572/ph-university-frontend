@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { FieldValues, SubmitHandler } from "react-hook-form";
 import PhForm from "../../../components/form/PhForm";
 import { Button, Col, Flex } from "antd";
@@ -9,6 +10,7 @@ import { academicSemesterSchema } from "../../../Schemas/academicManagement.sche
 import { useAddAcademicSemesterMutation } from "../../../redux/features/admin/academicManagement.api";
 import { toast } from "sonner";
 import type { TResponse } from "../../../types/global";
+import type { TAcademicSemester } from "../../../types/academicManagement.type";
 
 
 
@@ -22,7 +24,7 @@ const yearOption = [0, 1, 2, 3, 4].map(number => ({
     label: String(currentYear + number),
 }));
 
-const CreateAcademicSemester = () => {
+const CreateAcademicSemester : any = () => {
 
     const [addAcademicSemester] = useAddAcademicSemesterMutation();
 
@@ -39,7 +41,7 @@ const CreateAcademicSemester = () => {
             endMonth: data.startMonth,
         };
         try {
-            const res = await addAcademicSemester(semesterData) as TResponse;
+            const res = await addAcademicSemester(semesterData) as TResponse<TAcademicSemester>;
             if(res.error){
                 toast.error(res.error.data.message, {id: toastId});
             }else{
