@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export type TAcademicSemester = {
     _id: string;
     name: string;
@@ -11,6 +12,7 @@ export type TAcademicSemester = {
 };
 
 export type TAcademicFaculty = {
+    year: any;
     _id: string;
     name: string;
 }
